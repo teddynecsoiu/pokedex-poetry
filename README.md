@@ -12,7 +12,12 @@ python3 -m venv env
 source env/bin/activate
 python3 -m pip install -r requirements.txt
 
+# Set environment config level
+export APP_SETTINGS="config.DevelopmentConfig"
+export FLASK_ENV=development
+
 # Flask should default to the file but it's better to be specific
 export FLASK_APP=app.py
+
 python3 -m flask run
 ```
