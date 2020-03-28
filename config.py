@@ -1,27 +1,32 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+class ClientsConfig(object):
+    POKEAPI_URL = 'https://pokeapi.co/api/v2/pokemon/'
+    FUNTRANSLATION_URL = 'https://api.funtranslations.com/translate/shakespeare.json'
+    FUNTRANSLATION_KEY = ''
 
-class Config(object):
+
+class ServerConfig(object):
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'this-needs-to-be-changed'
 
 
-class ProductionConfig(Config):
+class ProductionConfig(ServerConfig):
     DEBUG = False
 
 
-class StagingConfig(Config):
+class StagingConfig(ServerConfig):
     DEVELOPMENT = True
     DEBUG = True
 
 
-class DevelopmentConfig(Config):
+class DevelopmentConfig(ServerConfig):
     DEVELOPMENT = True
     DEBUG = True
 
 
-class TestingConfig(Config):
+class TestingConfig(ServerConfig):
     TESTING = True
