@@ -4,6 +4,8 @@ A simple RESTful API that will take any pokemon name and return a Shakespearean 
 
 ## Running the app
 
+#### Running the app locally
+
 Assuming you have `python3` and `pip` already installed on your system.
 
 ```bash
@@ -20,4 +22,18 @@ export FLASK_ENV=development
 export FLASK_APP=app.py
 
 python3 -m flask run
+```
+
+#### Running the app in a docker container
+
+```bash
+# Build container
+docker build -t pokemon .
+
+
+# Run container
+docker run -it -p 5000:5000 \
+-e FLASK_ENV=development \
+-e APP_SETTINGS="config.DevelopmentConfig" \
+pokemon
 ```
