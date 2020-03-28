@@ -2,6 +2,8 @@
 
 A simple RESTful API that will take any pokemon name and return a Shakespearean description
 
+OpenAPI specification can be found on [Swagger UI](https://app.swaggerhub.com/apis-docs/teddynecsoiu/pokemon/1.0.0#/Pokemon/get_pokemon__pokemon_name_).
+
 ## Running the app
 
 #### Running the app locally
