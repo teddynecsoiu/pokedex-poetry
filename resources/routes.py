@@ -1,5 +1,7 @@
 import json
 import logging
+import pytz
+from datetime import timedelta, datetime
 from urllib.parse import urljoin
 
 import requests
@@ -16,6 +18,9 @@ funtranslation_api_key = ClientsConfig.FUNTRANSLATION_KEY
 
 
 class Pokemon(Resource):
+    def __init__(self, **kwargs):
+       self.cache= kwargs['cache']
+
     def get(self, pokemon_name):
         '''
         Return the first engligh Pokemon description from
@@ -29,6 +34,19 @@ class Pokemon(Resource):
         If a request failed before reaching Funtranslation,
         only `X-RateLimit-Funtranslations-Limit` will be present.
         '''
+
+        # Check cache first
+        if self.cache.get(pokemon_name) is not None:
+            description_obj = json.loads(self.cache.get(pokemon_name))
+            resp = make_response({
+                'pokemon': pokemon_name,
+                'description': description_obj['description']})
+            resp.headers.extend({
+                'Last-Modified': description_obj['created_at'],
+                'Expires': description_obj['expires_at']
+                })
+
+            return resp
 
         pokemon_url = urljoin(
             pokemon_api_url,
@@ -55,9 +73,20 @@ class Pokemon(Resource):
         check_response(pokemon_translation_req, api_name='Funtranslation')
         pokemon_traslate_body = validate_translation(pokemon_translation_req)
 
+        # Set cache
+        created_at = pytz.utc.localize(datetime.utcnow())
+        expires_at = pytz.utc.localize(datetime.utcnow() + timedelta(hours=10))
+        description_obj = {
+                'description': pokemon_traslate_body['contents']['translated'],
+                'created_at': created_at.strftime("%a, %d %b %Y %H:%M:%S %Z"),
+                'expires_at': expires_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+                }
+        self.cache.set(pokemon_name, json.dumps(description_obj))
+        self.cache.expire(pokemon_name, timedelta(hours=10)) 
+        
         headers = get_limit_header(pokemon_translation_req)
         resp = make_response({
             'pokemon': pokemon_name,
-            'description': pokemon_traslate_body['contents']['translated']})
+            'description': description_obj['description']})
         resp.headers.extend(headers)
         return resp
