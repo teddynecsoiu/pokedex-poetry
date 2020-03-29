@@ -18,6 +18,7 @@ python3 -m pip install -r requirements.txt
 
 # Set environment config level
 export APP_SETTINGS="config.DevelopmentConfig"
+export APP_LOGGING="logging.INFO"
 export FLASK_ENV=development
 
 # Flask should default to the file but it's better to be specific
@@ -36,6 +37,7 @@ docker build -t pokemon .
 # Run container
 docker run -it -p 5000:5000 \
 -e FLASK_ENV=development \
+-e APP_LOGGING="logging.INFO" \
 -e APP_SETTINGS="config.DevelopmentConfig" \
 pokemon
 ```
