@@ -1,8 +1,9 @@
 import logging
-from flask import make_response 
+from flask import make_response
 from flask_restful import abort
 
 from config import ClientsConfig
+
 
 def first(iterable, default=None, condition=lambda x: True):
     '''
@@ -49,18 +50,21 @@ def first(iterable, default=None, condition=lambda x: True):
         else:
             raise
 
+
 def extract_description(body):
     '''
     Extract the first english description from a nested dictionary.
     '''
-    pokemon_en_condition=lambda x: x['language']['name'] == 'en'
+    def pokemon_en_condition(x): return x['language']['name'] == 'en'
     first_en_description = first(
         body.get('flavor_text_entries'),
         condition=pokemon_en_condition)
-    
+
     # Some strings contains newline artefacts thoughout it
-    pokemon_description = first_en_description['flavor_text'].replace('\n', ' ')
+    pokemon_description = first_en_description['flavor_text'].replace(
+        '\n', ' ')
     return pokemon_description
+
 
 def get_limit_header(req):
     '''
@@ -78,10 +82,13 @@ def get_limit_header(req):
 
     if ClientsConfig.FUNTRANSLATION_URL in req.url:
         headers['X-RateLimit-Pokeapi-Limit'] = '100 per IP address per minute'
-        headers['X-RateLimit-Funtranslations-Limit'] = req.headers.get('X-RateLimit-Limit')
-        headers['X-RateLimit-Funtranslations-Remaining'] = req.headers.get('X-RateLimit-Remaining') 
+        headers['X-RateLimit-Funtranslations-Limit'] = req.headers.get(
+            'X-RateLimit-Limit')
+        headers['X-RateLimit-Funtranslations-Remaining'] = req.headers.get(
+            'X-RateLimit-Remaining')
 
     return headers
+
 
 def check_response(req, api_name):
     '''
@@ -93,13 +100,16 @@ def check_response(req, api_name):
         resp = make_response('', req.status_code)
         resp.headers.extend(headers)
         abort(resp)
-    elif req.status_code == 429:  
-        logging.info("To many requests! {} API limit reached!".format(api_name))
+    elif req.status_code == 429:
+        logging.info(
+            "To many requests! {} API limit reached!".format(api_name))
         resp = make_response('', req.status_code)
         resp.headers.extend(headers)
         abort(resp)
     elif req.status_code != 200:
-        logging.error("Unhandled response from Pokeapi API! status={}".format(req.status_code))
+        logging.error(
+            "Unhandled response from Pokeapi API! status={}".format(
+                req.status_code))
         resp = make_response('', 500)
         resp.headers.extend(headers)
         abort(resp)

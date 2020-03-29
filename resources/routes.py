@@ -1,9 +1,9 @@
 import json
 import logging
-from urllib.parse import urljoin 
+from urllib.parse import urljoin
 
 import requests
-from flask import make_response 
+from flask import make_response
 from flask_restful import Resource, abort
 
 from config import ClientsConfig
@@ -13,6 +13,7 @@ from .serializer import validate_pokemon, validate_family, validate_translation
 pokemon_api_url = ClientsConfig.POKEAPI_URL
 funtranslation_api_url = ClientsConfig.FUNTRANSLATION_URL
 funtranslation_api_key = ClientsConfig.FUNTRANSLATION_KEY
+
 
 class Pokemon(Resource):
     def get(self, pokemon_name):
@@ -29,7 +30,10 @@ class Pokemon(Resource):
         only `X-RateLimit-Funtranslations-Limit` will be present.
         '''
 
-        pokemon_url = urljoin(pokemon_api_url,pokemon_name, allow_fragments=True)
+        pokemon_url = urljoin(
+            pokemon_api_url,
+            pokemon_name,
+            allow_fragments=True)
 
         # Get Pokemon family
         pokemon_req = requests.get(pokemon_url)
@@ -48,12 +52,12 @@ class Pokemon(Resource):
         headers = {'x-funtranslations-api-secret': funtranslation_api_key}
         pokemon_translation_req = requests.post(
             funtranslation_api_url, data=json.dumps(payload), headers=headers)
-        check_response(pokemon_translation_req,api_name='Funtranslation')
+        check_response(pokemon_translation_req, api_name='Funtranslation')
         pokemon_traslate_body = validate_translation(pokemon_translation_req)
 
         headers = get_limit_header(pokemon_translation_req)
         resp = make_response({
-            'pokemon': pokemon_name, 
+            'pokemon': pokemon_name,
             'description': pokemon_traslate_body['contents']['translated']})
         resp.headers.extend(headers)
         return resp

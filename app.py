@@ -8,10 +8,11 @@ from flask_restful import Api
 
 from resources import routes
 
-if os.environ.get('APP_LOGGING') is None or os.environ.get('APP_SETTINGS') is None:
+if os.environ.get('APP_LOGGING') is None or os.environ.get(
+        'APP_SETTINGS') is None:
     print("Configuration missing. Check enviroment and try again!")
     sys.exit()
-    
+
 
 logging_level = import_string(os.environ.get('APP_LOGGING'))
 logging.basicConfig(level=logging_level)

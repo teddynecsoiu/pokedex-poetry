@@ -4,54 +4,69 @@ import logging
 from flask_restful import abort
 from marshmallow import Schema, fields, EXCLUDE, ValidationError
 
+
 class PokemonSpeciesSchema(Schema):
     url = fields.Str(required=True)
+
     class Meta:
         unknown = EXCLUDE
+
 
 class PokemonSchema(Schema):
     species = fields.Nested(
-            PokemonSpeciesSchema,
-            required=True
-            )
+        PokemonSpeciesSchema,
+        required=True
+    )
+
     class Meta:
         unknown = EXCLUDE
 
+
 class PokemonFlavorLanguageSchema(Schema):
     name = fields.Str(required=True)
+
     class Meta:
         unknown = EXCLUDE
+
 
 class PokemonFlavorDescrSchema(Schema):
     flavor_text = fields.Str(required=True)
     language = fields.Nested(
-            PokemonFlavorLanguageSchema,
-            required=True)
+        PokemonFlavorLanguageSchema,
+        required=True)
+
     class Meta:
         unknown = EXCLUDE
+
 
 class PokemonFamilySchema(Schema):
     flavor_text_entries = fields.List(
-            fields.Nested(
-                PokemonFlavorDescrSchema,
-                required=True),
-            required=True
-            )
+        fields.Nested(
+            PokemonFlavorDescrSchema,
+            required=True),
+        required=True
+    )
+
     class Meta:
         unknown = EXCLUDE
+
 
 class TranslatedSchema(Schema):
     translated = fields.Str(required=True)
+
     class Meta:
         unknown = EXCLUDE
 
+
 class TranslatedDescrSchema(Schema):
     contents = fields.Nested(
-            TranslatedSchema,
-            required=True
-            )
+        TranslatedSchema,
+        required=True
+    )
+
     class Meta:
         unknown = EXCLUDE
+
 
 def validate_pokemon(pokemon_req):
     '''
@@ -67,6 +82,7 @@ def validate_pokemon(pokemon_req):
         logging.error('PokemonSchema validation failed!', error)
         abort(500)
 
+
 def validate_family(pokemon_family_req):
     '''
     Validate dictionaly agains PokemonFamilySchema
@@ -81,6 +97,7 @@ def validate_family(pokemon_family_req):
         logging.error('PokemonFamilySchema validation failed!')
         abort(500)
 
+
 def validate_translation(pokemon_translation_req):
     '''
     Validate dictionaly agains TranslatedDescrSchema
@@ -94,4 +111,3 @@ def validate_translation(pokemon_translation_req):
     except ValidationError as error:
         logging.error('TranslatedDescrSchema validation failed!')
         abort(500)
-
