@@ -9,7 +9,9 @@ itsdangerous==1.1.0
 Jinja2==2.11.1
 MarkupSafe==1.1.1
 marshmallow==3.5.1
+pycodestyle==2.5.0
 pytz==2019.3
+redis==3.4.1
 requests==2.23.0
 six==1.14.0
 urllib3==1.25.8
