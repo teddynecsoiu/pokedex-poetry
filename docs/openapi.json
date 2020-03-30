@@ -1,0 +1,143 @@
+{
+  "openapi" : "3.0.0",
+  "info" : {
+    "title" : "Pokedex Poetry API",
+    "description" : "RESTful API that returns Shakespearean pokemon description.\n",
+    "version" : "1.0.0"
+  },
+  "servers" : [ {
+    "url" : "https://virtserver.swaggerhub.com/teddynecsoiu/transaction/1.0.0",
+    "description" : "SwaggerHub API Auto Mocking"
+  } ],
+  "paths" : {
+    "/pokemon/{pokemon_name}" : {
+      "get" : {
+        "tags" : [ "Pokemon" ],
+        "parameters" : [ {
+          "name" : "pokemon_name",
+          "in" : "path",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "headers" : {
+              "X-RateLimit-Pokeapi-Limit" : {
+                "description" : "Allowed number of requests per time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "X-RateLimit-Funtranslations-Limit" : {
+                "description" : "Allowed number of requests per time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "X-RateLimit-Funtranslations-Remaining" : {
+                "description" : "The number of requests left for the time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "integer"
+                }
+              }
+            },
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/PokemonOverview"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "headers" : {
+              "X-RateLimit-Pokeapi-Limit" : {
+                "description" : "Allowed number of requests per time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "X-RateLimit-Funtranslations-Limit" : {
+                "description" : "Allowed number of requests per time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "X-RateLimit-Funtranslations-Remaining" : {
+                "description" : "The number of requests left for the time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "integer"
+                }
+              }
+            }
+          },
+          "429" : {
+            "description" : "To many requests",
+            "headers" : {
+              "X-RateLimit-Pokeapi-Limit" : {
+                "description" : "Allowed number of requests per time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "X-RateLimit-Funtranslations-Limit" : {
+                "description" : "Allowed number of requests per time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                }
+              },
+              "X-RateLimit-Funtranslations-Remaining" : {
+                "description" : "The number of requests left for the time window.",
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "integer"
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error"
+          }
+        }
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "PokemonOverview" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string"
+          },
+          "description" : {
+            "type" : "string"
+          }
+        }
+      }
+    }
+  }
+}
