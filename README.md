@@ -43,3 +43,16 @@ export FLASK_APP=app.py
 python3 -m flask run
 ```
 
+## Testing
+
+The test are not exaustive but the run using [Pytest](https://docs.pytest.org/en/latest/).
+
+If you are using Docker Compose, the test are run everytime you start the containers. 
+
+To run the test locally you would first set up the enviroment as mentioned above, then set up the **testing** enviroment.
+
+```bash
+export APP_SETTINGS="config.TestingConfig"
+python3 -m pytest
+```
+
