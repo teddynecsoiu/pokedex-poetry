@@ -56,3 +56,9 @@ export APP_SETTINGS="config.TestingConfig"
 python3 -m pytest
 ```
 
+## TODO
+
+- Handle Rate Limiting headers
+- Add asyncio to Requests for concurency 
+- Add BDD tests
+- Improve configuration
