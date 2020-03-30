@@ -15,7 +15,7 @@ docker-compose up
 ```
 #### Running the app locally
 
-Since the app uses Redis to cache, you will need to configure it in `app.py`.
+Since the app uses Redis to cache, you will need to configure the host it in `app.py`.
 
 ```python
 # app.py 
