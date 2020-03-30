@@ -19,7 +19,7 @@ funtranslation_api_key = ClientsConfig.FUNTRANSLATION_KEY
 
 class Pokemon(Resource):
     def __init__(self, **kwargs):
-       self.cache= kwargs['cache']
+        self.cache = kwargs['cache']
 
     def get(self, pokemon_name):
         '''
@@ -44,7 +44,7 @@ class Pokemon(Resource):
             resp.headers.extend({
                 'Last-Modified': description_obj['created_at'],
                 'Expires': description_obj['expires_at']
-                })
+            })
 
             return resp
 
@@ -77,13 +77,13 @@ class Pokemon(Resource):
         created_at = pytz.utc.localize(datetime.utcnow())
         expires_at = pytz.utc.localize(datetime.utcnow() + timedelta(hours=10))
         description_obj = {
-                'description': pokemon_traslate_body['contents']['translated'],
-                'created_at': created_at.strftime("%a, %d %b %Y %H:%M:%S %Z"),
-                'expires_at': expires_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
-                }
+            'description': pokemon_traslate_body['contents']['translated'],
+            'created_at': created_at.strftime("%a, %d %b %Y %H:%M:%S %Z"),
+            'expires_at': expires_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+        }
         self.cache.set(pokemon_name, json.dumps(description_obj))
-        self.cache.expire(pokemon_name, timedelta(hours=10)) 
-        
+        self.cache.expire(pokemon_name, timedelta(hours=10))
+
         headers = get_limit_header(pokemon_translation_req)
         resp = make_response({
             'pokemon': pokemon_name,

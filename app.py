@@ -26,12 +26,14 @@ logging.basicConfig(level=logging_level)
 if import_string(config_path).TESTING is True:
     cache_client = MockCache()
 else:
-    cache_client = redis.Redis(host='redis', port=6379) 
+    cache_client = redis.Redis(host='redis', port=6379)
 
 app = Flask(__name__)
 app.config.from_object(config_path)
 api = Api(app)
 
-api.add_resource(routes.Pokemon, '/pokemon/<string:pokemon_name>', resource_class_kwargs={'cache': cache_client})
-
-
+api.add_resource(
+    routes.Pokemon,
+    '/pokemon/<string:pokemon_name>',
+    resource_class_kwargs={
+        'cache': cache_client})

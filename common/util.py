@@ -122,7 +122,7 @@ class MockCache:
     Simple disctionaly store that is meant to replicate
     methods provided by Redis.
 
-    Should be used for testing purposes only when 
+    Should be used for testing purposes only when
     needing to test the api and a mock cache is required.
     '''
 
