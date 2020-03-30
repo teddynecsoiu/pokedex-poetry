@@ -1,4 +1,9 @@
+import json
 import logging
+from datetime import timedelta, datetime
+
+import pytz
+import requests
 from flask import make_response
 from flask_restful import abort
 
@@ -90,10 +95,30 @@ def get_limit_header(req):
     return headers
 
 
+def check_pokeapi_request(url):
+    '''Handle RequestExceptions'''
+
+    try:
+        return requests.get(url)
+    except requests.exceptions.RequestException as error:
+        logging.Error(error)
+        abort(500)
+
+
+def check_funtranslation_request(url, key, description):
+    '''Handle RequestExceptions'''
+
+    try:
+        payload = {'text': description}
+        headers = {'x-funtranslations-api-secret': key}
+        return requests.post(url, data=json.dumps(payload), headers=headers)
+    except requests.exceptions.RequestException as error:
+        logging.Error(error)
+        abort(500)
+
+
 def check_response(req, api_name):
-    '''
-    Handle and log all non 200 requests.
-    '''
+    '''Handle and log all non 200 requests.'''
 
     headers = get_limit_header(req)
     if req.status_code == 404:
@@ -115,6 +140,23 @@ def check_response(req, api_name):
         abort(resp)
     else:
         pass
+
+
+def set_description_cache(cache, name, body):
+    '''
+    Save description responses to cache together
+    with the creating and expiration UTC timestamp.
+    '''
+
+    created_at = pytz.utc.localize(datetime.utcnow())
+    expires_at = pytz.utc.localize(datetime.utcnow() + timedelta(hours=10))
+    description_obj = {
+        'description': body['contents']['translated'],
+        'created_at': created_at.strftime("%a, %d %b %Y %H:%M:%S %Z"),
+        'expires_at': expires_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
+    }
+    cache.set(name, json.dumps(description_obj))
+    cache.expire(name, timedelta(hours=10))
 
 
 class MockCache:

@@ -26,7 +26,7 @@ logging.basicConfig(level=logging_level)
 if import_string(config_path).TESTING is True:
     cache_client = MockCache()
 else:
-    cache_client = redis.Redis(host='redis', port=6379)
+    cache_client = redis.Redis(host='localhost', port=6379)
 
 app = Flask(__name__)
 app.config.from_object(config_path)

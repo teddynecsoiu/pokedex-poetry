@@ -80,6 +80,9 @@ def validate_pokemon(pokemon_req):
         return PokemonSchema().load(pokemon_req.json())
     except ValidationError as error:
         logging.error('PokemonSchema validation failed!', error)
+
+        # This erorr is a internal issue, so it should not
+        # be surfaced to the user.
         abort(500)
 
 
@@ -95,6 +98,9 @@ def validate_family(pokemon_family_req):
         return PokemonFamilySchema().load(pokemon_family_req.json())
     except ValidationError as error:
         logging.error('PokemonFamilySchema validation failed!')
+
+        # This erorr is a internal issue, so it should not
+        # be surfaced to the user.
         abort(500)
 
 
@@ -110,4 +116,7 @@ def validate_translation(pokemon_translation_req):
         return TranslatedDescrSchema().load(pokemon_translation_req.json())
     except ValidationError as error:
         logging.error('TranslatedDescrSchema validation failed!')
+
+        # This erorr is a internal issue, so it should not
+        # be surfaced to the user.
         abort(500)

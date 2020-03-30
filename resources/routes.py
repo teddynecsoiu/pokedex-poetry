@@ -9,12 +9,8 @@ from flask import make_response
 from flask_restful import Resource, abort
 
 from config import ClientsConfig
-from common.util import first, extract_description, check_response, get_limit_header
+from common import util
 from .serializer import validate_pokemon, validate_family, validate_translation
-
-pokemon_api_url = ClientsConfig.POKEAPI_URL
-funtranslation_api_url = ClientsConfig.FUNTRANSLATION_URL
-funtranslation_api_key = ClientsConfig.FUNTRANSLATION_KEY
 
 
 class Pokemon(Resource):
@@ -35,6 +31,8 @@ class Pokemon(Resource):
         only `X-RateLimit-Funtranslations-Limit` will be present.
         '''
 
+        # TODO: this should be refactored in more granular components
+
         # Check cache first
         if self.cache.get(pokemon_name) is not None:
             description_obj = json.loads(self.cache.get(pokemon_name))
@@ -49,44 +47,38 @@ class Pokemon(Resource):
             return resp
 
         pokemon_url = urljoin(
-            pokemon_api_url,
+            ClientsConfig.POKEAPI_URL,
             pokemon_name,
             allow_fragments=True)
 
         # Get Pokemon family
-        pokemon_req = requests.get(pokemon_url)
-        check_response(pokemon_req, api_name='Pokeapi')
+        pokemon_req = util.check_pokeapi_request(pokemon_url)
+        util.check_response(pokemon_req, api_name='Pokeapi')
         pokemon_body = validate_pokemon(pokemon_req)
         pokemon_family_url = pokemon_body['species']['url']
 
         # Get Pokemon description
-        pokemon_family_req = requests.get(pokemon_family_url)
-        check_response(pokemon_family_req, api_name='Pokeapi')
+        pokemon_family_req = util.check_pokeapi_request(pokemon_family_url)
+        util.check_response(pokemon_family_req, api_name='Pokeapi')
         pokemon_family_body = validate_family(pokemon_family_req)
-        pokemon_description = extract_description(pokemon_family_body)
+        pokemon_description = util.extract_description(pokemon_family_body)
 
         # Get translated description
-        payload = {'text': pokemon_description}
-        headers = {'x-funtranslations-api-secret': funtranslation_api_key}
-        pokemon_translation_req = requests.post(
-            funtranslation_api_url, data=json.dumps(payload), headers=headers)
-        check_response(pokemon_translation_req, api_name='Funtranslation')
+        pokemon_translation_req = util.check_funtranslation_request(
+            ClientsConfig.FUNTRANSLATION_URL,
+            ClientsConfig.FUNTRANSLATION_KEY,
+            pokemon_description
+        )
+        util.check_response(pokemon_translation_req, api_name='Funtranslation')
         pokemon_traslate_body = validate_translation(pokemon_translation_req)
 
         # Set cache
-        created_at = pytz.utc.localize(datetime.utcnow())
-        expires_at = pytz.utc.localize(datetime.utcnow() + timedelta(hours=10))
-        description_obj = {
-            'description': pokemon_traslate_body['contents']['translated'],
-            'created_at': created_at.strftime("%a, %d %b %Y %H:%M:%S %Z"),
-            'expires_at': expires_at.strftime("%a, %d %b %Y %H:%M:%S %Z")
-        }
-        self.cache.set(pokemon_name, json.dumps(description_obj))
-        self.cache.expire(pokemon_name, timedelta(hours=10))
+        util.set_description_cache(
+            self.cache, pokemon_name, pokemon_traslate_body)
 
-        headers = get_limit_header(pokemon_translation_req)
+        headers = util.get_limit_header(pokemon_translation_req)
         resp = make_response({
             'pokemon': pokemon_name,
-            'description': description_obj['description']})
+            'description': pokemon_traslate_body['contents']['translated']})
         resp.headers.extend(headers)
         return resp
