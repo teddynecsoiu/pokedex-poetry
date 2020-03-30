@@ -6,6 +6,17 @@ OpenAPI specification can be found on [Swagger UI](https://app.swaggerhub.com/ap
 
 ## Running the app
 
+### Dependencies
+
+The Funtranslation API requires a validation key. They key is set in the `config.py` file.
+
+```python
+# config.py
+class ClientsConfig(object):
+...
+  FUNTRANSLATION_KEY = ''
+```
+
 #### Running the app in using Docker and Docker Compose
 
 Easiest way by far is to use [Docker Compose](https://docs.docker.com/compose/). 
