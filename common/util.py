@@ -115,3 +115,25 @@ def check_response(req, api_name):
         abort(resp)
     else:
         pass
+
+
+class MockCache:
+    '''
+    Simple disctionaly store that is meant to replicate
+    methods provided by Redis.
+
+    Should be used for testing purposes only when 
+    needing to test the api and a mock cache is required.
+    '''
+
+    store = {}
+
+    def get(self, key):
+        return self.store.get(key)
+
+    def set(self, key, value):
+        self.store[key] = value
+        return True
+
+    def expire(self, *unused):
+        return True
